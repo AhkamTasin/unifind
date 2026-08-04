@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Log In | UniFind{% endblock %}
+{% block content %}
+<section class="py-5 bg-light min-vh-100">
+  <div class="container" style="max-width: 480px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <i class="bi bi-box-arrow-in-right text-primary display-4"></i>
+          <h1 class="h3 fw-bold mt-2">Welcome back</h1>
+          <p class="text-secondary small">Log in to manage your reports and claims.</p>
+        </div>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+          {% include "partials/form_field.html" %}
+          <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold">Log In</button>
+        </form>
+        <p class="text-center small text-secondary mt-3 mb-0">
+          New here? <a href="{% url 'register' %}">Create an account</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

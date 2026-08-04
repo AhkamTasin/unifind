@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My Profile | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 640px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center p-4 p-md-5">
+        {% if user.profile_photo %}
+          <img src="{{ user.profile_photo.url }}" class="rounded-circle profile-avatar mb-3" alt="Profile photo">
+        {% else %}
+          <div class="rounded-circle profile-avatar d-inline-flex align-items-center justify-content-center bg-warning text-dark fw-bold fs-1 mb-3">
+            {{ user.full_name|first|upper }}
+          </div>
+        {% endif %}
+        <h4 class="fw-bold mb-1">{{ user.full_name }}</h4>
+        <span class="badge text-bg-primary mb-2">@{{ user.username }}</span><br>
+        <span class="badge text-bg-info mb-2">{{ user.get_role_display }}</span>
+        <p class="text-secondary small mb-3">{{ user.department|default:"No department set" }}</p>
+
+        <hr>
+        <ul class="list-unstyled small text-start mx-auto mb-4" style="max-width: 360px;">
+          <li class="mb-2"><i class="bi bi-envelope me-2 text-secondary"></i>{{ user.email|default:"—" }}</li>
+          <li class="mb-2"><i class="bi bi-telephone me-2 text-secondary"></i>{{ user.phone|default:"—" }}</li>
+          <li class="mb-2"><i class="bi bi-calendar-plus me-2 text-secondary"></i>Joined {{ user.date_joined|date:"F Y" }}</li>
+        </ul>
+
+        <div class="d-grid gap-2" style="max-width: 360px; margin: 0 auto;">
+          <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+          <a href="{% url 'password_change' %}" class="btn btn-outline-secondary"><i class="bi bi-key me-2"></i>Change Password</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

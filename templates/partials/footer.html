@@ -1,0 +1,50 @@
+{% load static %}
+<footer class="app-footer mt-auto pt-5 pb-4 text-white">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <a class="d-flex align-items-center gap-2 text-white text-decoration-none mb-2" href="{% url 'home' %}" title="UniFind — Campus Lost &amp; Found Management System">
+          <img src="{% static 'img/logo.svg' %}" width="32" height="32" alt="UniFind logo">
+          <span class="fw-bold fs-5">Uni<span class="text-warning">Find</span></span>
+        </a>
+        <p class="small text-white-50 mb-3">
+          UniFind is a centralized platform for managing lost and found items across the
+          university campus — with physical verification at the Campus Lost and Found Desk.
+          <strong class="text-warning">Project under active development (CSE 338).</strong>
+        </p>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="text-warning fw-semibold">Explore</h6>
+        <ul class="list-unstyled small">
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'home' %}">Home</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'how_it_works' %}">How It Works</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'about' %}">About</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6 class="text-warning fw-semibold">Get Started</h6>
+        <ul class="list-unstyled small">
+          {% if user.is_authenticated %}
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'profile' %}">My Profile</a></li>
+          {% else %}
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'register' %}">Create an Account</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'login' %}">Log In</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="col-lg-3">
+        <h6 class="text-warning fw-semibold">Campus Lost &amp; Found Desk</h6>
+        <ul class="list-unstyled small text-white-50">
+          <li class="mb-1"><i class="bi bi-geo-alt me-2"></i>Student Services Building, Room 102</li>
+          <li class="mb-1"><i class="bi bi-clock me-2"></i>Sun–Thu, 9:00 AM – 5:00 PM</li>
+          <li class="mb-1"><i class="bi bi-envelope me-2"></i>desk@campus.edu.bd</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="border-secondary">
+    <div class="d-flex flex-column flex-md-row justify-content-between small text-white-50">
+      <span>© {% now "Y" %} UniFind — Campus Lost &amp; Found Management System · Sylhet Engineering College</span>
+      <span>Built with Django &amp; Bootstrap 5</span>
+    </div>
+  </div>
+</footer>

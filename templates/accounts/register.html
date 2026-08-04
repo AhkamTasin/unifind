@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Register | UniFind{% endblock %}
+{% block content %}
+<section class="py-5 bg-light min-vh-100">
+  <div class="container" style="max-width: 640px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <i class="bi bi-person-plus text-primary display-4"></i>
+          <h1 class="h3 fw-bold mt-2">Create your account</h1>
+          <p class="text-secondary small">Join to report lost or found items and submit claims.</p>
+        </div>
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          {% include "partials/form_field.html" %}
+          <div class="form-text mb-3">
+            <i class="bi bi-shield-lock me-1"></i>Passwords are stored securely (hashed). Select "Admin" only if you are the Lost &amp; Found Desk Officer.
+          </div>
+          <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold">Register</button>
+        </form>
+        <p class="text-center small text-secondary mt-3 mb-0">
+          Already have an account? <a href="{% url 'login' %}">Log in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

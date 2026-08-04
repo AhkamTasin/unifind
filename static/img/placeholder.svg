@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#eef1f7"/>
+  <g fill="none" stroke="#c3ccdb" stroke-width="10" opacity="0.8">
+    <circle cx="175" cy="135" r="45"/>
+    <line x1="208" y1="168" x2="250" y2="210" stroke-linecap="round"/>
+  </g>
+  <text x="200" y="250" font-family="Inter, Arial, sans-serif" font-size="18" fill="#8a94a8" text-anchor="middle">No image uploaded</text>
+</svg>

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Hero -->
+<section class="hero-section text-white position-relative overflow-hidden">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="container position-relative py-5">
+    <div class="row align-items-center g-5 py-lg-5">
+      <div class="col-lg-8 mx-auto text-center">
+        <span class="badge text-bg-warning rounded-pill px-3 py-2 mb-3 fw-semibold">
+          <i class="bi bi-mortarboard me-1"></i> Campus Lost &amp; Found Management System
+        </span>
+        <h1 class="display-5 fw-bold mb-3">
+          Lost something? <span class="text-warning">Found something?</span><br>
+          UniFind will help.
+        </h1>
+        <p class="lead text-white-50 mb-4">
+          A centralized platform for reporting and recovering lost and found items on campus —
+          with physical verification at the Campus Lost &amp; Found Desk.
+          <br class="d-none d-md-block">
+          <span class="badge text-bg-light-subtle text-dark mt-2">🚧 Under active development — new modules added every day</span>
+        </p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+          <a href="{% url 'register' %}" class="btn btn-warning btn-lg fw-semibold">
+            <i class="bi bi-person-plus me-2"></i>Create an Account
+          </a>
+          <a href="{% url 'how_it_works' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-compass me-2"></i>How It Works
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works strip -->
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">How it works</h2>
+      <p class="text-secondary">A simple, secure process from report to recovery.</p>
+    </div>
+    <div class="row g-4 text-center">
+      <div class="col-md-3">
+        <div class="step-icon mx-auto"><i class="bi bi-pencil-square"></i></div>
+        <h6 class="fw-bold mt-3">1. Report</h6>
+        <p class="small text-secondary mb-0">Report a lost or found item with photos and details.</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-icon mx-auto"><i class="bi bi-shop"></i></div>
+        <h6 class="fw-bold mt-3">2. Submit to Desk</h6>
+        <p class="small text-secondary mb-0">Found items are physically handed to the Lost &amp; Found Desk.</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-icon mx-auto"><i class="bi bi-patch-check"></i></div>
+        <h6 class="fw-bold mt-3">3. Verify &amp; Track</h6>
+        <p class="small text-secondary mb-0">The desk verifies the item and assigns a unique tracking ID.</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-icon mx-auto"><i class="bi bi-house-heart"></i></div>
+        <h6 class="fw-bold mt-3">4. Claim &amp; Recover</h6>
+        <p class="small text-secondary mb-0">Owners submit claims; approved claims collect their items.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modules in development -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4 p-md-5 text-center">
+        <h4 class="fw-bold"><i class="bi bi-hammer me-2 text-warning"></i>Modules in Development</h4>
+        <p class="text-secondary mb-4">The following modules are currently being built and will be added in the coming days:</p>
+        <div class="row g-3 justify-content-center">
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-white rounded-3 border h-100">
+              <i class="bi bi-search fs-3 text-primary"></i>
+              <div class="fw-semibold mt-2 small">Search &amp; Browsing</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-white rounded-3 border h-100">
+              <i class="bi bi-clipboard-check fs-3 text-info"></i>
+              <div class="fw-semibold mt-2 small">Ownership Claims</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-white rounded-3 border h-100">
+              <i class="bi bi-speedometer2 fs-3 text-warning"></i>
+              <div class="fw-semibold mt-2 small">Admin Panel &amp; Tracking IDs</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-white rounded-3 border h-100">
+              <i class="bi bi-house-heart fs-3 text-success"></i>
+              <div class="fw-semibold mt-2 small">Item Collection &amp; Resolution</div>
+            </div>
+          </div>
+        </div>
+        <p class="small text-secondary mt-4 mb-0">
+          Follow the project on GitHub to see daily progress →
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

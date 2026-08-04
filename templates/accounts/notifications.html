@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Notifications | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 820px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="fw-bold mb-0"><i class="bi bi-bell me-2"></i>Notifications</h1>
+        <p class="text-secondary mb-0">{{ unread_count }} unread notification{{ unread_count|pluralize }}</p>
+      </div>
+      {% if unread_count %}
+      <form method="post" action="{% url 'notifications_read' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-check2-all me-1"></i>Mark all as read</button>
+      </form>
+      {% endif %}
+    </div>
+
+    {% if notifs %}
+      <div class="list-group shadow-sm">
+        {% for n in notifs %}
+          <a href="{% if n.link %}{{ n.link }}{% else %}{% url 'notifications' %}{% endif %}"
+             class="list-group-item list-group-item-action {% if not n.is_read %}list-group-item-warning{% endif %}">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1 fw-semibold">
+                  {% if not n.is_read %}<span class="dot bg-primary d-inline-block me-2"></span>{% endif %}
+                  {{ n.title }}
+                </h6>
+                {% if n.message %}<p class="mb-1 small text-secondary">{{ n.message }}</p>{% endif %}
+              </div>
+              <small class="text-secondary text-nowrap ms-3">{{ n.created_at|date:"M j, Y h:i A" }}</small>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5 text-secondary">
+        <i class="bi bi-bell-slash display-4"></i>
+        <p class="mt-3 mb-0">No notifications yet.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
