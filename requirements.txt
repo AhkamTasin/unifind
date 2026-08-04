@@ -1,0 +1,5 @@
+Django>=5.0,<7.0
+# --- Optional: MySQL database support (as stated in the proposal) ---
+# Use PyMySQL (pure-Python, easy install) or mysqlclient:
+PyMySQL>=1.1
+# mysqlclient>=2.2
