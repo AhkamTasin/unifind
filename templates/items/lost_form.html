@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 760px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="rounded-3 p-3 bg-danger-subtle"><i class="bi bi-emoji-frown text-danger fs-3"></i></div>
+          <div>
+            <h1 class="h3 fw-bold mb-0">{{ title }}</h1>
+            <p class="text-secondary small mb-0">Tell us about the item you lost. We'll match it with items at the desk.</p>
+          </div>
+        </div>
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          {% include "partials/form_field.html" %}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger btn-lg fw-semibold"><i class="bi bi-send me-2"></i>Submit Report</button>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

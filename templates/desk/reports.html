@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Desk Reports | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container-fluid px-lg-4" style="max-width: 1200px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+      <h1 class="fw-bold mb-0"><i class="bi bi-clipboard-data me-2"></i>Desk Reports</h1>
+    </div>
+    <div class="alert alert-info small mb-4">
+      <i class="bi bi-eye me-2"></i>
+      <strong>Read-only view.</strong> The desk can see every report submitted by users.
+      Accept / reject / verification actions will be added in the next module.
+    </div>
+
+    <!-- Lost reports -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white fw-bold">
+        <i class="bi bi-emoji-frown text-danger me-2"></i>Lost Item Reports ({{ lost_items|length }})
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr><th>#</th><th>Item</th><th>Category</th><th>Reported by</th><th>Lost at</th><th>Lost date</th><th>Reported on</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for item in lost_items %}
+            <tr>
+              <td>{{ item.pk }}</td>
+              <td class="fw-semibold">{{ item.item_name }}</td>
+              <td>{{ item.category.name }}</td>
+              <td>{{ item.reporter.full_name }} <span class="text-secondary small">({{ item.reporter.get_role_display }})</span></td>
+              <td>{{ item.lost_location }}</td>
+              <td>{{ item.lost_date|date:"M j, Y" }}</td>
+              <td>{{ item.created_at|date:"M j, Y h:i A" }}</td>
+              <td><span class="badge text-bg-warning">Open</span></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-center text-secondary py-4">No lost item reports yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Found reports -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-bold">
+        <i class="bi bi-emoji-smile text-success me-2"></i>Found Item Reports ({{ found_items|length }})
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr><th>#</th><th>Item</th><th>Category</th><th>Reported by</th><th>Found at</th><th>Found date</th><th>Reported on</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for item in found_items %}
+            <tr>
+              <td>{{ item.pk }}</td>
+              <td class="fw-semibold">{{ item.item_name }}</td>
+              <td>{{ item.category.name }}</td>
+              <td>{{ item.finder.full_name }} <span class="text-secondary small">({{ item.finder.get_role_display }})</span></td>
+              <td>{{ item.found_location }}</td>
+              <td>{{ item.found_date|date:"M j, Y" }}</td>
+              <td>{{ item.created_at|date:"M j, Y h:i A" }}</td>
+              <td><span class="badge text-bg-secondary">Pending</span></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-center text-secondary py-4">No found item reports yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
