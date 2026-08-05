@@ -6,7 +6,7 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
       <div>
         <h1 class="fw-bold mb-0"><i class="bi bi-journal-text me-2"></i>My Reports</h1>
-        <p class="text-secondary mb-0">The reports you have submitted.</p>
+        <p class="text-secondary mb-0">Everything you've reported to the system.</p>
       </div>
       <div class="d-flex gap-2">
         <a href="{% url 'report_lost' %}" class="btn btn-outline-danger"><i class="bi bi-plus-lg me-1"></i>Report Lost</a>
@@ -24,15 +24,26 @@
         {% if lost_items %}
           <div class="table-responsive">
             <table class="table align-middle">
-              <thead><tr><th>Item</th><th>Category</th><th>Lost Location</th><th>Lost Date</th><th>Status</th></tr></thead>
+              <thead><tr><th>Item</th><th>Category</th><th>Lost Location</th><th>Date</th><th>Status</th><th></th></tr></thead>
               <tbody>
                 {% for item in lost_items %}
                 <tr>
-                  <td class="fw-semibold">{{ item.item_name }}</td>
+                  <td><a href="{% url 'lost_detail' item.pk %}" class="fw-semibold text-decoration-none">{{ item.item_name }}</a></td>
                   <td>{{ item.category.name }}</td>
                   <td>{{ item.lost_location }}</td>
                   <td>{{ item.lost_date|date:"M j, Y" }}</td>
-                  <td><span class="badge text-bg-warning">Open</span></td>
+                  <td>
+                    {% if item.status == 'OPEN' %}<span class="badge text-bg-warning">Open</span>
+                    {% elif item.status == 'RESOLVED' %}<span class="badge text-bg-dark">Resolved</span>
+                    {% else %}<span class="badge text-bg-secondary">Rejected</span>{% endif %}
+                  </td>
+                  <td class="text-end">
+                    {% if item.status != 'RESOLVED' %}
+                      <form method="post" action="{% url 'delete_my_report' 'lost' item.pk %}" class="d-inline" data-confirm="Delete this lost item report?">
+                        {% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                      </form>
+                    {% endif %}
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -47,15 +58,34 @@
         {% if found_items %}
           <div class="table-responsive">
             <table class="table align-middle">
-              <thead><tr><th>Item</th><th>Category</th><th>Found Location</th><th>Found Date</th><th>Status</th></tr></thead>
+              <thead><tr><th>Item</th><th>Tracking ID</th><th>Found Location</th><th>Date</th><th>Status</th><th></th></tr></thead>
               <tbody>
                 {% for item in found_items %}
                 <tr>
-                  <td class="fw-semibold">{{ item.item_name }}</td>
-                  <td>{{ item.category.name }}</td>
+                  <td><a href="{% url 'found_detail' item.pk %}" class="fw-semibold text-decoration-none">{{ item.item_name }}</a></td>
+                  <td>{% if item.tracking_id %}<code>{{ item.tracking_id }}</code>{% else %}<span class="text-secondary">—</span>{% endif %}</td>
                   <td>{{ item.found_location }}</td>
                   <td>{{ item.found_date|date:"M j, Y" }}</td>
-                  <td><span class="badge text-bg-secondary">Pending</span></td>
+                  <td>
+                    {% if item.status == 'PENDING' %}<span class="badge text-bg-secondary">Pending Submission</span>
+                    {% elif item.status == 'SUBMITTED' %}<span class="badge text-bg-info">Submitted to Desk</span>
+                    {% elif item.status == 'AVAILABLE' %}<span class="badge text-bg-success">Verified &amp; Available</span>
+                    {% elif item.status == 'RESERVED' %}<span class="badge text-bg-primary">Claim Approved</span>
+                    {% elif item.status == 'RESOLVED' %}<span class="badge text-bg-dark">Resolved</span>
+                    {% else %}<span class="badge text-bg-danger">Rejected</span>{% endif %}
+                  </td>
+                  <td class="text-end">
+                    {% if item.status == 'PENDING' %}
+                      <form method="post" action="{% url 'mark_submitted' item.pk %}" class="d-inline">
+                        {% csrf_token %}<button class="btn btn-sm btn-outline-info" title="I've submitted it to the desk"><i class="bi bi-shop"></i> Submit</button>
+                      </form>
+                    {% endif %}
+                    {% if item.status == 'PENDING' or item.status == 'REJECTED' %}
+                      <form method="post" action="{% url 'delete_my_report' 'found' item.pk %}" class="d-inline" data-confirm="Delete this found item report?">
+                        {% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                      </form>
+                    {% endif %}
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>

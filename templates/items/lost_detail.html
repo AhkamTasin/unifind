@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ item.item_name }} — Lost Item | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'browse_lost' %}">Lost Items</a></li>
+        <li class="breadcrumb-item active">{{ item.item_name|truncatechars:30 }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0 overflow-hidden">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="w-100 detail-img" alt="{{ item.item_name }}">
+          {% else %}
+            <div class="detail-img d-flex align-items-center justify-content-center bg-white">
+              <img src="{% static 'img/placeholder.svg' %}" class="w-50" alt="No image">
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body p-4">
+            <span class="badge text-bg-danger mb-2">Lost Item</span>
+            {% if item.status == 'OPEN' %}
+              <span class="badge text-bg-warning mb-2">Open Case</span>
+            {% elif item.status == 'RESOLVED' %}
+              <span class="badge text-bg-dark mb-2">Resolved</span>
+            {% else %}
+              <span class="badge text-bg-secondary mb-2">Rejected</span>
+            {% endif %}
+            <h1 class="h3 fw-bold">{{ item.item_name }}</h1>
+            <p class="text-secondary">{{ item.description }}</p>
+
+            <hr>
+            <ul class="list-unstyled small">
+              <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Category:</strong> {{ item.category.name }}</li>
+              <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i><strong>Lost at:</strong> {{ item.lost_location }}</li>
+              <li class="mb-2"><i class="bi bi-calendar3 me-2 text-primary"></i><strong>Lost on:</strong> {{ item.lost_date|date:"l, F j, Y" }}</li>
+              <li class="mb-2"><i class="bi bi-person me-2 text-primary"></i><strong>Reported by:</strong> {{ item.reporter.full_name }} ({{ item.reporter.get_role_display }})</li>
+              <li><i class="bi bi-clock me-2 text-primary"></i><strong>Reported on:</strong> {{ item.created_at|date:"F j, Y h:i A" }}</li>
+            </ul>
+
+            <div class="alert alert-warning small mb-3">
+              <i class="bi bi-lightbulb me-2"></i>
+              Found something similar? Check the <a href="{% url 'browse_found' %}" class="alert-link">found items</a>
+              at the desk, or <a href="{% url 'report_found' %}" class="alert-link">report it</a> so we can match them.
+            </div>
+
+            {% if item.status == 'OPEN' and user.is_authenticated %}
+              <a href="{% url 'browse_found' %}?category={{ item.category_id }}&status=AVAILABLE"
+                 class="btn btn-primary w-100"><i class="bi bi-search me-2"></i>Find Similar Found Items</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

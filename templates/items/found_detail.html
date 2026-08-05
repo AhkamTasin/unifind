@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ item.item_name }} — Found Item | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'browse_found' %}">Found Items</a></li>
+        <li class="breadcrumb-item active">{{ item.item_name|truncatechars:30 }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0 overflow-hidden">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="w-100 detail-img" alt="{{ item.item_name }}">
+          {% else %}
+            <div class="detail-img d-flex align-items-center justify-content-center bg-white">
+              <img src="{% static 'img/placeholder.svg' %}" class="w-50" alt="No image">
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body p-4">
+            <span class="badge text-bg-success mb-2">Found Item</span>
+            {% with s=item.status_badge %}
+              <span class="badge text-bg-{{ s.0 }} mb-2">{{ s.1 }}</span>
+            {% endwith %}
+            {% if item.tracking_id %}
+              <span class="badge text-bg-dark mb-2"><i class="bi bi-upc-scan me-1"></i>{{ item.tracking_id }}</span>
+            {% endif %}
+            <h1 class="h3 fw-bold">{{ item.item_name }}</h1>
+            <p class="text-secondary">{{ item.description }}</p>
+
+            <hr>
+            <ul class="list-unstyled small">
+              <li class="mb-2"><i class="bi bi-tag me-2 text-success"></i><strong>Category:</strong> {{ item.category.name }}</li>
+              <li class="mb-2"><i class="bi bi-geo-alt me-2 text-success"></i><strong>Found at:</strong> {{ item.found_location }}</li>
+              <li class="mb-2"><i class="bi bi-calendar3 me-2 text-success"></i><strong>Found on:</strong> {{ item.found_date|date:"l, F j, Y" }}</li>
+              {% if item.tracking_id %}
+                <li class="mb-2"><i class="bi bi-upc-scan me-2 text-success"></i><strong>Tracking ID:</strong> {{ item.tracking_id }}</li>
+              {% endif %}
+              {% if item.verified_by %}
+                <li class="mb-2"><i class="bi bi-patch-check me-2 text-success"></i><strong>Verified by:</strong> {{ item.verified_by.full_name }}</li>
+              {% endif %}
+              <li><i class="bi bi-clock me-2 text-success"></i><strong>Reported on:</strong> {{ item.created_at|date:"F j, Y h:i A" }}</li>
+            </ul>
+
+            <!-- Finder actions -->
+            {% if user.is_authenticated and item.finder_id == user.id %}
+              <div class="alert alert-info small mb-3">
+                <i class="bi bi-info-circle me-2"></i>You found this item.
+                {% if item.status == 'PENDING' %}
+                  Please physically submit it to the Campus Lost &amp; Found Desk.
+                  <form method="post" action="{% url 'mark_submitted' item.pk %}" class="mt-2">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-info"><i class="bi bi-shop me-1"></i>I've submitted it to the Desk</button>
+                  </form>
+                {% elif item.status == 'SUBMITTED' %}
+                  Submitted — the desk is verifying it.
+                {% elif item.status == 'AVAILABLE' %}
+                  The desk verified your find. Owners can now claim it.
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <!-- Claim CTA -->
+            {% if item.open_for_claims %}
+              {% if user.is_authenticated %}
+                {% if already_claimed %}
+                  <div class="alert alert-success small mb-3"><i class="bi bi-check-circle me-2"></i>You have already submitted a claim for this item. <a href="{% url 'my_claims' %}" class="alert-link">View its status</a>.</div>
+                {% else %}
+                  <a href="{% url 'submit_claim' item.pk %}" class="btn btn-success w-100 btn-lg">
+                    <i class="bi bi-clipboard-check me-2"></i>Claim This Item
+                  </a>
+                {% endif %}
+              {% else %}
+                <a href="{% url 'login' %}?next={% url 'found_detail' item.pk %}" class="btn btn-outline-success w-100">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Log in to claim this item
+                </a>
+              {% endif %}
+            {% elif item.status == 'RESERVED' %}
+              <div class="alert alert-primary small mb-0"><i class="bi bi-hourglass-split me-2"></i>This item has an approved claim and is awaiting collection at the desk.</div>
+            {% elif item.status == 'RESOLVED' %}
+              <div class="alert alert-dark small mb-0"><i class="bi bi-check2-circle me-2"></i>This item has been returned to its owner. Case resolved.</div>
+            {% elif item.status == 'REJECTED' %}
+              <div class="alert alert-danger small mb-0"><i class="bi bi-x-circle me-2"></i>This report was rejected by the desk and is no longer active.</div>
+            {% else %}
+              <div class="alert alert-secondary small mb-0"><i class="bi bi-hourglass me-2"></i>This item is awaiting desk verification before it can be claimed.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Admin: claims for this item -->
+        {% if user.is_admin_user and claims %}
+        <div class="card shadow-sm border-0 mt-4">
+          <div class="card-header bg-white fw-bold"><i class="bi bi-clipboard-check me-2"></i>Claims on this item</div>
+          <ul class="list-group list-group-flush">
+            {% for c in claims %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ c.claimant.full_name }}</strong>
+                  <span class="text-secondary small d-block">{{ c.created_at|date:"M j, Y" }}</span>
+                </div>
+                {% with b=c.status_badge %}
+                  <span class="badge text-bg-{{ b.0 }}">{{ b.1 }}</span>
+                {% endwith %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

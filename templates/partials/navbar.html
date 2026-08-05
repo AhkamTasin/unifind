@@ -12,6 +12,13 @@
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Browse</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'browse_lost' %}"><i class="bi bi-search me-2"></i>Lost Items</a></li>
+            <li><a class="dropdown-item" href="{% url 'browse_found' %}"><i class="bi bi-hand-index-thumb me-2"></i>Found Items</a></li>
+          </ul>
+        </li>
         {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Report</a>

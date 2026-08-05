@@ -1,0 +1,44 @@
+{% load static %}
+<div class="col">
+  <div class="card h-100 item-card shadow-sm border-0">
+    <div class="item-thumb position-relative">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" class="card-img-top item-thumb-img" alt="{{ item.item_name }}" loading="lazy">
+      {% else %}
+        <img src="{% static 'img/placeholder.svg' %}" class="card-img-top item-thumb-img" alt="No image" loading="lazy">
+      {% endif %}
+      {% if kind == 'lost' %}
+        <span class="badge text-bg-danger position-absolute top-0 start-0 m-2">Lost</span>
+      {% else %}
+        <span class="badge text-bg-success position-absolute top-0 start-0 m-2">Found</span>
+      {% endif %}
+      {% if item.tracking_id %}
+        <span class="badge text-bg-dark position-absolute top-0 end-0 m-2">ID: {{ item.tracking_id }}</span>
+      {% endif %}
+    </div>
+    <div class="card-body d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-start mb-1">
+        <h6 class="card-title fw-bold mb-0">{{ item.item_name }}</h6>
+        <span class="small text-secondary ms-2">{{ item.category.name }}</span>
+      </div>
+      <p class="card-text small text-secondary flex-grow-1 item-desc">
+        {{ item.description|truncatewords:18 }}
+      </p>
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <small class="text-secondary">
+          <i class="bi bi-geo-alt me-1"></i>
+          {% if kind == 'lost' %}{{ item.lost_location }}{% else %}{{ item.found_location }}{% endif %}
+        </small>
+        <small class="text-secondary">
+          <i class="bi bi-calendar3 me-1"></i>
+          {% if kind == 'lost' %}{{ item.lost_date|date:"M j, Y" }}{% else %}{{ item.found_date|date:"M j, Y" }}{% endif %}
+        </small>
+      </div>
+      {% if kind == 'lost' %}
+        <a href="{% url 'lost_detail' item.pk %}" class="btn btn-sm btn-outline-primary mt-3">View Details</a>
+      {% else %}
+        <a href="{% url 'found_detail' item.pk %}" class="btn btn-sm btn-outline-success mt-3">View Details</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

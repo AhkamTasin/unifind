@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}About | UniFind{% endblock %}
+{% block content %}
+<section class="py-5 bg-light min-vh-100">
+  <div class="container" style="max-width: 860px;">
+    <div class="text-center mb-5">
+      <h1 class="fw-bold">About the System</h1>
+      <p class="text-secondary">UniFind — Campus Lost &amp; Found Management System · CSE 338 Web Technologies Sessional</p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-4 p-md-5">
+        <p>
+          <strong>UniFind</strong> (the Campus Lost &amp; Found Management System) is a web-based
+          application designed to manage
+          lost and found items within a university campus. In many universities, lost and found activities are managed
+          through informal methods such as social media, notice boards, or verbal communication — making the process
+          inefficient, unorganized, and difficult to manage.
+        </p>
+        <p>
+          This system provides a <strong>centralized platform</strong> where students, teachers, and staff can report
+          lost or found items, search available records, and submit ownership claims. Every found item must be
+          physically submitted to the <strong>Campus Lost &amp; Found Desk</strong> before its report is approved.
+          The admin verifies the submitted item, assigns a unique tracking ID, reviews ownership claims, and ensures
+          recovered items are returned to their rightful owners.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <i class="bi bi-bullseye text-primary display-5"></i>
+          <h6 class="fw-bold mt-3">Objectives</h6>
+          <p class="small text-secondary mb-0">Centralized reporting, desk verification, unique tracking IDs, secure claim handling and faster recovery.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <i class="bi bi-people text-success display-5"></i>
+          <h6 class="fw-bold mt-3">Target Users</h6>
+          <p class="small text-secondary mb-0">Students, teachers and university staff report items; the Lost &amp; Found Desk Officer verifies and manages cases.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <i class="bi bi-stack text-warning display-5"></i>
+          <h6 class="fw-bold mt-3">Technology</h6>
+          <p class="small text-secondary mb-0">Django (Python) backend with MySQL database, Bootstrap 5, HTML5, CSS3 and JavaScript frontend.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

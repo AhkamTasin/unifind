@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}How It Works | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 960px;">
+    <div class="text-center mb-5">
+      <h1 class="fw-bold">How It Works</h1>
+      <p class="text-secondary">Every found item is physically verified at the Campus Lost &amp; Found Desk before it is published.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <span class="badge text-bg-danger mb-3">I lost an item</span>
+            <h5 class="fw-bold">Recovering your belongings</h5>
+            <ol class="mb-0 small">
+              <li class="mb-2"><strong>Report</strong> the lost item with details and a photo.</li>
+              <li class="mb-2"><strong>Search</strong> found items at the desk — you can filter by category, location and date.</li>
+              <li class="mb-2"><strong>Submit a claim</strong> on a verified found item that matches, describing how you can prove ownership.</li>
+              <li class="mb-2">The <strong>Desk Officer reviews</strong> your claim and approves or rejects it.</li>
+              <li><strong>Collect your item</strong> from the desk with your ID and supporting proof.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body p-4">
+            <span class="badge text-bg-success mb-3">I found an item</span>
+            <h5 class="fw-bold">Helping someone recover it</h5>
+            <ol class="mb-0 small">
+              <li class="mb-2"><strong>Report</strong> the found item online with a photo and where you found it.</li>
+              <li class="mb-2"><strong>Physically submit</strong> the item to the Campus Lost &amp; Found Desk (Student Services Building, Room 102).</li>
+              <li class="mb-2">The desk <strong>verifies</strong> the item and assigns a <strong>unique tracking ID</strong>.</li>
+              <li class="mb-2">Owners <strong>claim</strong> the item; the desk verifies each claim.</li>
+              <li>The item is <strong>returned</strong> to its rightful owner and the case is resolved.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-4">
+        <h5 class="fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>Why physical verification?</h5>
+        <p class="small text-secondary mb-0">
+          Digital reporting alone makes it easy for fake or unverified posts to appear. By requiring every found item
+          to be physically handed to the Lost &amp; Found Desk before publishing, and by having the Desk Officer review
+          every ownership claim, the system keeps records reliable and reduces fraudulent claims.
+        </p>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h5 class="fw-bold"><i class="bi bi-upc-scan me-2 text-primary"></i>Tracking IDs</h5>
+        <p class="small text-secondary mb-0">
+          Every verified found item receives a unique tracking ID such as <code>LF-2026-4K7QX9</code>. You can use this
+          ID to refer to an item when talking to the desk or when submitting a claim.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

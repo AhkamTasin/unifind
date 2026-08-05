@@ -7,28 +7,76 @@
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="container position-relative py-5">
-    <div class="row align-items-center g-5 py-lg-5">
-      <div class="col-lg-8 mx-auto text-center">
+    <div class="row align-items-center g-5 py-lg-4">
+      <div class="col-lg-6">
         <span class="badge text-bg-warning rounded-pill px-3 py-2 mb-3 fw-semibold">
-          <i class="bi bi-mortarboard me-1"></i> Campus Lost &amp; Found Management System
+          <i class="bi bi-mortarboard me-1"></i> Official Campus Desk Platform
         </span>
         <h1 class="display-5 fw-bold mb-3">
-          Lost something? <span class="text-warning">Found something?</span><br>
-          UniFind will help.
+          Lost something? <span class="text-warning">Found something?</span><br>We've got you covered.
         </h1>
         <p class="lead text-white-50 mb-4">
-          A centralized platform for reporting and recovering lost and found items on campus —
-          with physical verification at the Campus Lost &amp; Found Desk.
-          <br class="d-none d-md-block">
-          <span class="badge text-bg-light-subtle text-dark mt-2">🚧 Under active development — new modules added every day</span>
+          Report lost or found items in minutes, search verified records, submit ownership claims,
+          and recover your belongings — all through <span class="text-warning fw-semibold">UniFind</span>,
+          the campus lost &amp; found management system.
         </p>
-        <div class="d-flex flex-wrap gap-2 justify-content-center">
-          <a href="{% url 'register' %}" class="btn btn-warning btn-lg fw-semibold">
-            <i class="bi bi-person-plus me-2"></i>Create an Account
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <a href="{% url 'browse_lost' %}" class="btn btn-warning btn-lg fw-semibold">
+            <i class="bi bi-search me-2"></i>Browse Lost Items
           </a>
-          <a href="{% url 'how_it_works' %}" class="btn btn-outline-light btn-lg">
-            <i class="bi bi-compass me-2"></i>How It Works
+          <a href="{% url 'browse_found' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-hand-index-thumb me-2"></i>Browse Found Items
           </a>
+          {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-light btn-lg">
+              <i class="bi bi-person-plus me-2"></i>Join Now
+            </a>
+          {% endif %}
+        </div>
+
+        <!-- Quick search -->
+        <form action="{% url 'browse_found' %}" method="get" class="hero-search bg-white rounded-pill p-1 d-flex shadow-lg">
+          <i class="bi bi-search text-secondary ms-3 align-self-center"></i>
+          <input type="search" name="q" class="form-control border-0 shadow-none px-2"
+                 placeholder="Search found items by name, description or location..." aria-label="Search">
+          <select name="category" class="form-select border-0 shadow-none w-auto d-none d-md-block">
+            <option value="">All categories</option>
+            {% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+          </select>
+          <button class="btn btn-primary rounded-pill px-4 flex-shrink-0" type="submit">Search</button>
+        </form>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="stat-card glass text-center p-4 rounded-4 h-100">
+              <i class="bi bi-emoji-frown display-6 text-danger"></i>
+              <h2 class="fw-bold mt-2 mb-0">{{ stats.lost_count }}</h2>
+              <span class="text-white-50 small">Open Lost Reports</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-card glass text-center p-4 rounded-4 h-100">
+              <i class="bi bi-hand-index-thumb display-6 text-success"></i>
+              <h2 class="fw-bold mt-2 mb-0">{{ stats.found_count }}</h2>
+              <span class="text-white-50 small">Verified Found Items</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-card glass text-center p-4 rounded-4 h-100">
+              <i class="bi bi-clipboard-check display-6 text-warning"></i>
+              <h2 class="fw-bold mt-2 mb-0">{{ stats.claims_count }}</h2>
+              <span class="text-white-50 small">Pending Claims</span>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-card glass text-center p-4 rounded-4 h-100">
+              <i class="bi bi-check2-circle display-6 text-info"></i>
+              <h2 class="fw-bold mt-2 mb-0">{{ stats.resolved_count }}</h2>
+              <span class="text-white-50 small">Items Returned</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -67,42 +115,57 @@
   </div>
 </section>
 
-<!-- Modules in development -->
+<!-- Recent found -->
 <section class="py-5 bg-light">
   <div class="container">
-    <div class="card border-0 shadow-sm">
-      <div class="card-body p-4 p-md-5 text-center">
-        <h4 class="fw-bold"><i class="bi bi-hammer me-2 text-warning"></i>Modules in Development</h4>
-        <p class="text-secondary mb-4">The following modules are currently being built and will be added in the coming days:</p>
-        <div class="row g-3 justify-content-center">
-          <div class="col-6 col-md-3">
-            <div class="p-3 bg-white rounded-3 border h-100">
-              <i class="bi bi-search fs-3 text-primary"></i>
-              <div class="fw-semibold mt-2 small">Search &amp; Browsing</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="p-3 bg-white rounded-3 border h-100">
-              <i class="bi bi-clipboard-check fs-3 text-info"></i>
-              <div class="fw-semibold mt-2 small">Ownership Claims</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="p-3 bg-white rounded-3 border h-100">
-              <i class="bi bi-speedometer2 fs-3 text-warning"></i>
-              <div class="fw-semibold mt-2 small">Admin Panel &amp; Tracking IDs</div>
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <div class="p-3 bg-white rounded-3 border h-100">
-              <i class="bi bi-house-heart fs-3 text-success"></i>
-              <div class="fw-semibold mt-2 small">Item Collection &amp; Resolution</div>
-            </div>
-          </div>
-        </div>
-        <p class="small text-secondary mt-4 mb-0">
-          Follow the project on GitHub to see daily progress →
-        </p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0"><i class="bi bi-hand-index-thumb text-success me-2"></i>Recently Found</h2>
+      <a href="{% url 'browse_found' %}" class="btn btn-outline-success btn-sm">View all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    {% if recent_found %}
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        {% for item in recent_found %}
+          {% include "partials/item_card.html" with kind='found' %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info">No verified found items yet. Check back soon!</div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Recent lost -->
+<section class="py-5 bg-white">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold mb-0"><i class="bi bi-emoji-frown text-danger me-2"></i>Recently Lost</h2>
+      <a href="{% url 'browse_lost' %}" class="btn btn-outline-danger btn-sm">View all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    {% if recent_lost %}
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        {% for item in recent_lost %}
+          {% include "partials/item_card.html" with kind='lost' %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info">No lost item reports yet.</div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5">
+  <div class="container">
+    <div class="cta-banner rounded-4 p-5 text-center text-white position-relative overflow-hidden">
+      <h2 class="fw-bold mb-2">Found something on campus?</h2>
+      <p class="mb-4">Don't keep it — report it to the desk and help someone get their belongings back.</p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="{% url 'report_found' %}" class="btn btn-warning btn-lg fw-semibold">
+          <i class="bi bi-plus-circle me-2"></i>Report a Found Item
+        </a>
+        <a href="{% url 'report_lost' %}" class="btn btn-outline-light btn-lg">
+          <i class="bi bi-plus-circle me-2"></i>Report a Lost Item
+        </a>
       </div>
     </div>
   </div>

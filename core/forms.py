@@ -1,9 +1,9 @@
-"""Forms for UniFind — current stage: user module (registration, login, profile)."""
+"""Forms for the Campus Lost & Found Management System."""
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.core.validators import RegexValidator
 
-from .models import FoundItem, LostItem, User
+from .models import Claim, FoundItem, LostItem, User
 
 PHONE_VALIDATOR = RegexValidator(
     regex=r"^\+?[0-9\-\s]{7,20}$",
@@ -12,7 +12,7 @@ PHONE_VALIDATOR = RegexValidator(
 
 
 class UserRegistrationForm(forms.ModelForm):
-    """Registration form for students, teachers, staff and admins (FR-01)."""
+    """Registration form for students, teachers, staff and admins."""
 
     full_name = forms.CharField(
         max_length=100,
@@ -94,8 +94,6 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(AuthenticationForm):
-    """Login form (FR-02)."""
-
     username = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}),
         label="Username",
@@ -227,3 +225,36 @@ class FoundItemForm(forms.ModelForm):
         if date and date > timezone.localdate():
             raise forms.ValidationError("Found date cannot be in the future.")
         return date
+
+
+class ClaimForm(forms.ModelForm):
+    """Submit an ownership claim for a verified found item (FR-10)."""
+
+    class Meta:
+        model = Claim
+        fields = ["claim_description", "proof_file"]
+        widgets = {
+            "claim_description": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": (
+                        "Describe the item in detail (colour, brand, contents, serial "
+                        "number, personal marks ...) so the desk can verify ownership."
+                    ),
+                }
+            ),
+            "proof_file": forms.ClearableFileInput(attrs={"class": "form-control"}),
+        }
+        labels = {
+            "claim_description": "How can you prove this is yours?",
+            "proof_file": "Supporting file (photo / receipt / student ID — optional)",
+        }
+
+    def clean_claim_description(self):
+        desc = self.cleaned_data["claim_description"].strip()
+        if len(desc) < 20:
+            raise forms.ValidationError(
+                "Please give at least a short description (20+ characters) to verify ownership."
+            )
+        return desc
