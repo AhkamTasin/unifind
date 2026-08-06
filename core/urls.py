@@ -35,4 +35,8 @@ urlpatterns = [
         views.delete_my_report,
         name="delete_my_report",
     ),
+    # Ownership claims (FR-10, FR-11, FR-13)
+    path("claims/<int:found_id>/new/", views.submit_claim, name="submit_claim"),
+    path("my-claims/", views.my_claims, name="my_claims"),
+    path("my-claims/<int:pk>/", views.claim_detail, name="claim_detail"),
 ]

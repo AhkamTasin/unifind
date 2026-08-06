@@ -2,7 +2,7 @@
 <footer class="app-footer mt-auto pt-5 pb-4 text-white">
   <div class="container">
     <div class="row g-4">
-      <div class="col-lg-5">
+      <div class="col-lg-4">
         <a class="d-flex align-items-center gap-2 text-white text-decoration-none mb-2" href="{% url 'home' %}" title="UniFind — Campus Lost &amp; Found Management System">
           <img src="{% static 'img/logo.svg' %}" width="32" height="32" alt="UniFind logo">
           <span class="fw-bold fs-5">Uni<span class="text-warning">Find</span></span>
@@ -10,22 +10,27 @@
         <p class="small text-white-50 mb-3">
           UniFind is a centralized platform for managing lost and found items across the
           university campus — with physical verification at the Campus Lost and Found Desk.
-          <strong class="text-warning">Project under active development (CSE 338).</strong>
         </p>
+        <div>
+          <span class="badge text-bg-light me-1">CSE 338</span>
+          <span class="badge text-bg-light">Web Technologies Sessional</span>
+        </div>
       </div>
       <div class="col-6 col-lg-2">
-        <h6 class="text-warning fw-semibold">Explore</h6>
+        <h6 class="text-warning fw-semibold">Browse</h6>
         <ul class="list-unstyled small">
-          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'home' %}">Home</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'browse_lost' %}">Lost Items</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'browse_found' %}">Found Items</a></li>
           <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'how_it_works' %}">How It Works</a></li>
-          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'about' %}">About</a></li>
         </ul>
       </div>
-      <div class="col-6 col-lg-2">
-        <h6 class="text-warning fw-semibold">Get Started</h6>
+      <div class="col-6 col-lg-3">
+        <h6 class="text-warning fw-semibold">Quick Actions</h6>
         <ul class="list-unstyled small">
           {% if user.is_authenticated %}
-          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'profile' %}">My Profile</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'report_lost' %}">Report a Lost Item</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'report_found' %}">Report a Found Item</a></li>
+          <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'my_claims' %}">My Claims</a></li>
           {% else %}
           <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'register' %}">Create an Account</a></li>
           <li class="mb-1"><a class="text-white-50 text-decoration-none" href="{% url 'login' %}">Log In</a></li>

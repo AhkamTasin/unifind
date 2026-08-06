@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Claim Details | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 760px;">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'my_claims' %}">My Claims</a></li>
+        <li class="breadcrumb-item active">Claim #{{ claim.pk }}</li>
+      </ol>
+    </nav>
+
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+          <div>
+            <h1 class="h4 fw-bold mb-1">Claim #{{ claim.pk }} — {{ claim.found_item.item_name }}</h1>
+            <p class="text-secondary small mb-0">
+              Submitted {{ claim.created_at|date:"F j, Y h:i A" }}
+            </p>
+          </div>
+          {% with b=claim.status_badge %}
+            <span class="badge text-bg-{{ b.0 }} fs-6">{{ b.1 }}</span>
+          {% endwith %}
+        </div>
+
+        <hr>
+        <h6 class="fw-bold"><i class="bi bi-box-seam me-2"></i>Item</h6>
+        <ul class="list-unstyled small mb-4">
+          <li class="mb-1"><strong>Name:</strong> <a href="{% url 'found_detail' claim.found_item.pk %}">{{ claim.found_item.item_name }}</a></li>
+          <li class="mb-1"><strong>Category:</strong> {{ claim.found_item.category.name }}</li>
+          <li class="mb-1"><strong>Found at:</strong> {{ claim.found_item.found_location }}</li>
+          {% if claim.found_item.tracking_id %}<li><strong>Tracking ID:</strong> <code>{{ claim.found_item.tracking_id }}</code></li>{% endif %}
+        </ul>
+
+        <h6 class="fw-bold"><i class="bi bi-chat-left-text me-2"></i>Your claim description</h6>
+        <p class="small text-secondary">{{ claim.claim_description }}</p>
+
+        {% if claim.proof_file %}
+          <h6 class="fw-bold mt-3"><i class="bi bi-paperclip me-2"></i>Supporting file</h6>
+          <a href="{{ claim.proof_file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+            <i class="bi bi-file-earmark me-1"></i>{{ claim.proof_file.name|cut:"claim_proofs/" }}
+          </a>
+        {% endif %}
+
+        {% if claim.reviewed_by %}
+          <hr>
+          <p class="small text-secondary mb-0">
+            <i class="bi bi-person-check me-1"></i>Reviewed by <strong>{{ claim.reviewed_by.full_name }}</strong>
+            {% if claim.reviewed_at %}on {{ claim.reviewed_at|date:"F j, Y h:i A" }}{% endif %}.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
