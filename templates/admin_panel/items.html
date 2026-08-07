@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Manage Posts | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container-fluid px-lg-4" style="max-width: 1400px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+      <h1 class="fw-bold mb-0"><i class="bi bi-collection me-2"></i>Manage Posts</h1>
+      <div class="btn-group">
+        <a href="{% url 'admin_items' %}?kind=found" class="btn {% if kind == 'found' %}btn-success{% else %}btn-outline-success{% endif %}">Found Items</a>
+        <a href="{% url 'admin_items' %}?kind=lost" class="btn {% if kind == 'lost' %}btn-danger{% else %}btn-outline-danger{% endif %}">Lost Items</a>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <form method="get" class="row g-2 align-items-end mb-3">
+          <input type="hidden" name="kind" value="{{ kind }}">
+          <div class="col-md-3">
+            <input type="search" name="q" value="{{ params.q }}" class="form-control" placeholder="Search items...">
+          </div>
+          <div class="col-6 col-md-2">
+            <select name="category" class="form-select">
+              <option value="">All categories</option>
+              {% for c in categories %}<option value="{{ c.id }}" {% if params.category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <select name="status" class="form-select">
+              <option value="">All statuses</option>
+              {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if params.status == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-primary"><i class="bi bi-funnel me-1"></i>Filter</button>
+            <a href="{% url 'admin_items' %}?kind={{ kind }}" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+          </div>
+        </form>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>#</th><th>Item</th><th>Category</th><th>{% if kind == 'lost' %}Lost at{% else %}Found at{% endif %}</th>
+                <th>{% if kind == 'lost' %}Reporter{% else %}Finder{% endif %}</th>
+                <th>Tracking ID</th><th>Status</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %}
+              <tr>
+                <td>{{ item.pk }}</td>
+                <td class="fw-semibold">{{ item.item_name }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{% if kind == 'lost' %}{{ item.lost_location }}{% else %}{{ item.found_location }}{% endif %}</td>
+                <td>{% if kind == 'lost' %}{{ item.reporter.full_name }}{% else %}{{ item.finder.full_name }}{% endif %}</td>
+                <td>{% if item.tracking_id %}<code>{{ item.tracking_id }}</code>{% else %}<span class="text-secondary">—</span>{% endif %}</td>
+                <td>
+                  {% if kind == 'lost' %}
+                    {% if item.status == 'OPEN' %}<span class="badge text-bg-warning">Open</span>
+                    {% elif item.status == 'RESOLVED' %}<span class="badge text-bg-dark">Resolved</span>
+                    {% else %}<span class="badge text-bg-secondary">Rejected</span>{% endif %}
+                  {% else %}
+                    {% if item.status == 'PENDING' %}<span class="badge text-bg-secondary">Pending Submission</span>
+                    {% elif item.status == 'SUBMITTED' %}<span class="badge text-bg-info">Submitted</span>
+                    {% elif item.status == 'AVAILABLE' %}<span class="badge text-bg-success">Available</span>
+                    {% elif item.status == 'RESERVED' %}<span class="badge text-bg-primary">Claim Approved</span>
+                    {% elif item.status == 'RESOLVED' %}<span class="badge text-bg-dark">Resolved</span>
+                    {% else %}<span class="badge text-bg-danger">Rejected</span>{% endif %}
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <a href="{% url 'admin_item_detail' kind item.pk %}" class="btn btn-sm btn-outline-primary">Open</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="8" class="text-center text-secondary py-4">No items found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% include "partials/pagination.html" %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

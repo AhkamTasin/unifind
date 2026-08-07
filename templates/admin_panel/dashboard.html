@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container-fluid px-lg-4" style="max-width: 1400px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h1>
+        <p class="text-secondary mb-0">Campus Lost &amp; Found Desk overview</p>
+      </div>
+      <a href="{% url 'admin_items' %}" class="btn btn-primary"><i class="bi bi-collection me-1"></i>Manage Posts</a>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card-mini border-0 shadow-sm text-center py-3">
+          <i class="bi bi-people fs-3 text-primary"></i>
+          <h3 class="fw-bold mb-0">{{ stats.total_users }}</h3><span class="text-secondary small">Active Users</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card-mini border-0 shadow-sm text-center py-3">
+          <i class="bi bi-emoji-frown fs-3 text-danger"></i>
+          <h3 class="fw-bold mb-0">{{ stats.total_lost }}</h3><span class="text-secondary small">Lost Reports</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card-mini border-0 shadow-sm text-center py-3">
+          <i class="bi bi-hand-index-thumb fs-3 text-success"></i>
+          <h3 class="fw-bold mb-0">{{ stats.total_found }}</h3><span class="text-secondary small">Found Reports</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card-mini border-0 shadow-sm text-center py-3 border-start border-4 border-warning">
+          <i class="bi bi-hourglass-split fs-3 text-warning"></i>
+          <h3 class="fw-bold mb-0">{{ stats.pending_found }}</h3><span class="text-secondary small">Awaiting Verification</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card-mini border-0 shadow-sm text-center py-3 border-start border-4 border-info">
+          <i class="bi bi-clipboard-check fs-3 text-info"></i>
+          <h3 class="fw-bold mb-0">{{ stats.pending_claims }}</h3><span class="text-secondary small">Pending Claims</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card stat-card-mini border-0 shadow-sm text-center py-3">
+          <i class="bi bi-check2-circle fs-3 text-dark"></i>
+          <h3 class="fw-bold mb-0">{{ stats.resolved }}</h3><span class="text-secondary small">Resolved</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Chart -->
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white fw-bold">Reports by Category</div>
+          <div class="card-body">
+            <canvas id="categoryChart" style="max-height: 320px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent claims -->
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+            <span>Recent Pending Claims</span>
+            <a href="{% url 'admin_claims' %}" class="btn btn-sm btn-outline-primary">View all</a>
+          </div>
+          <div class="list-group list-group-flush">
+            {% for c in recent_claims %}
+              <a href="{% url 'admin_claim_detail' c.pk %}" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <strong>{{ c.claimant.full_name }}</strong>
+                    <span class="text-secondary small d-block">claims {{ c.found_item.item_name }}</span>
+                  </div>
+                  <small class="text-secondary text-nowrap">{{ c.created_at|date:"M j" }}</small>
+                </div>
+              </a>
+            {% empty %}
+              <div class="list-group-item text-secondary">No pending claims 🎉</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent items -->
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+            <span>Recent Activity</span>
+            <a href="{% url 'admin_items' %}" class="btn btn-sm btn-outline-primary">Manage posts</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle small">
+              <thead><tr><th>Type</th><th>Item</th><th>Reporter</th><th>Status</th><th>Reported</th><th></th></tr></thead>
+              <tbody>
+                {% for item in recent_items %}
+                  <tr>
+                    <td>
+                      {% if item.lost_date %}
+                        <span class="badge text-bg-danger">Lost</span>
+                      {% else %}
+                        <span class="badge text-bg-success">Found</span>
+                      {% endif %}
+                    </td>
+                    <td class="fw-semibold">{{ item.item_name }}</td>
+                    <td>{% if item.lost_date %}{{ item.reporter.full_name }}{% else %}{{ item.finder.full_name }}{% endif %}</td>
+                    <td><span class="badge text-bg-secondary">{{ item.get_status_display }}</span></td>
+                    <td>{{ item.created_at|date:"M j, H:i" }}</td>
+                    <td>
+                      <a href="{% if item.lost_date %}{% url 'admin_item_detail' 'lost' item.pk %}{% else %}{% url 'admin_item_detail' 'found' item.pk %}{% endif %}" class="btn btn-sm btn-outline-primary">Open</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white fw-bold">Quick Actions</div>
+          <div class="card-body d-grid gap-2">
+            <a href="{% url 'admin_items' %}?kind=found&status=SUBMITTED" class="btn btn-outline-info text-start"><i class="bi bi-patch-check me-2"></i>Verify submitted found items</a>
+            <a href="{% url 'admin_items' %}?kind=found&status=PENDING" class="btn btn-outline-secondary text-start"><i class="bi bi-shop me-2"></i>Items awaiting desk submission</a>
+            <a href="{% url 'admin_claims' %}?status=PENDING" class="btn btn-outline-warning text-start"><i class="bi bi-clipboard-check me-2"></i>Review pending claims</a>
+            <a href="{% url 'admin_users' %}" class="btn btn-outline-primary text-start"><i class="bi bi-people me-2"></i>Manage users</a>
+            <a href="{% url 'admin_categories' %}" class="btn btn-outline-dark text-start"><i class="bi bi-tags me-2"></i>Manage categories</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  const labels = {{ chart_labels|safe }};
+  const lostData = {{ chart_lost|safe }};
+  const foundData = {{ chart_found|safe }};
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Lost', data: lostData, backgroundColor: '#dc3545' },
+        { label: 'Found', data: foundData, backgroundColor: '#198754' }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+    }
+  });
+</script>
+{% endblock %}

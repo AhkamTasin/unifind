@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Claim #{{ claim.pk }} | Admin | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 820px;">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'admin_claims' %}">Claims</a></li>
+        <li class="breadcrumb-item active">Claim #{{ claim.pk }}</li>
+      </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+          <div>
+            <h1 class="h4 fw-bold mb-1">Claim #{{ claim.pk }}</h1>
+            <p class="text-secondary small mb-0">Submitted {{ claim.created_at|date:"F j, Y h:i A" }}</p>
+          </div>
+          {% with b=claim.status_badge %}<span class="badge text-bg-{{ b.0 }} fs-6">{{ b.1 }}</span>{% endwith %}
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <h6 class="fw-bold"><i class="bi bi-person me-2"></i>Claimant</h6>
+            <ul class="list-unstyled small">
+              <li class="mb-1"><strong>{{ claim.claimant.full_name }}</strong></li>
+              <li class="mb-1">{{ claim.claimant.get_role_display }} · {{ claim.claimant.department|default:"—" }}</li>
+              <li class="mb-1"><i class="bi bi-envelope me-1"></i>{{ claim.claimant.email|default:"—" }}</li>
+              <li><i class="bi bi-telephone me-1"></i>{{ claim.claimant.phone|default:"—" }}</li>
+            </ul>
+            {% if claim.claimant.profile_photo %}
+              <img src="{{ claim.claimant.profile_photo.url }}" class="rounded-3 shadow-sm" style="max-height: 110px;" alt="profile photo">
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+            <h6 class="fw-bold"><i class="bi bi-box-seam me-2"></i>Item</h6>
+            <ul class="list-unstyled small">
+              <li class="mb-1"><strong>{{ claim.found_item.item_name }}</strong></li>
+              <li class="mb-1">{{ claim.found_item.category.name }} · found at {{ claim.found_item.found_location }}</li>
+              {% if claim.found_item.tracking_id %}<li class="mb-1">Tracking ID: <code>{{ claim.found_item.tracking_id }}</code></li>{% endif %}
+              <li class="mb-1">Found by {{ claim.found_item.finder.full_name }}</li>
+              <li><a href="{% url 'admin_item_detail' 'found' claim.found_item.pk %}" class="btn btn-sm btn-outline-primary mt-1">Open item post</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+        <h6 class="fw-bold"><i class="bi bi-chat-left-text me-2"></i>Claim description / proof</h6>
+        <p>{{ claim.claim_description }}</p>
+        {% if claim.proof_file %}
+          <p>
+            <a href="{{ claim.proof_file.url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+              <i class="bi bi-file-earmark me-1"></i>{{ claim.proof_file.name|cut:"claim_proofs/" }}
+            </a>
+          </p>
+        {% else %}
+          <p class="small text-secondary">No supporting file attached.</p>
+        {% endif %}
+
+        {% if claim.reviewed_by %}
+          <p class="small text-secondary mb-0">
+            Reviewed by <strong>{{ claim.reviewed_by.full_name }}</strong>
+            {% if claim.reviewed_at %}on {{ claim.reviewed_at|date:"F j, Y h:i A" }}{% endif %}.
+          </p>
+        {% endif %}
+
+        {% if claim.status == 'PENDING' %}
+          <hr>
+          <h6 class="fw-bold mb-3">Decision</h6>
+          <form method="post" action="{% url 'admin_claim_action' claim.pk %}" class="d-flex flex-wrap gap-2">
+            {% csrf_token %}
+            <button name="action" value="approve" class="btn btn-success btn-lg" data-confirm="Approve this claim? The item will be reserved for this claimant.">
+              <i class="bi bi-check-lg me-1"></i>Approve Claim
+            </button>
+            <button name="action" value="reject" class="btn btn-outline-danger btn-lg" data-confirm="Reject this claim?">
+              <i class="bi bi-x-lg me-1"></i>Reject Claim
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

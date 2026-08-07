@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Manage Users | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 1200px;">
+    <h1 class="fw-bold mb-3"><i class="bi bi-people me-2"></i>Manage Users</h1>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <form method="get" class="row g-2 align-items-end mb-3">
+          <div class="col-md-4">
+            <input type="search" name="q" value="{{ params.q }}" class="form-control" placeholder="Search name, username, email, department...">
+          </div>
+          <div class="col-md-3">
+            <select name="role" class="form-select">
+              <option value="">All roles</option>
+              {% for value, label in role_choices %}
+                <option value="{{ value }}" {% if params.role == value %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-primary"><i class="bi bi-funnel me-1"></i>Filter</button>
+            <a href="{% url 'admin_users' %}" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+          </div>
+        </form>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr><th>User</th><th>Role</th><th>Department</th><th>Contact</th><th>Joined</th><th>Status</th><th class="text-end">Actions</th></tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+              <tr class="{% if not u.is_active %}table-secondary opacity-75{% endif %}">
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    {% if u.profile_photo %}
+                      <img src="{{ u.profile_photo.url }}" class="rounded-circle" width="36" height="36" alt="">
+                    {% else %}
+                      <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-secondary text-white fw-bold" style="width:36px;height:36px;">{{ u.full_name|first|upper }}</span>
+                    {% endif %}
+                    <div>
+                      <div class="fw-semibold">{{ u.full_name }}{% if u == request.user %} <span class="badge text-bg-info">You</span>{% endif %}</div>
+                      <small class="text-secondary">@{{ u.username }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge text-bg-{% if u.role == 'ADMIN' %}warning{% elif u.role == 'TEACHER' %}info{% elif u.role == 'STAFF' %}secondary{% else %}primary{% endif %}">{{ u.get_role_display }}</span></td>
+                <td>{{ u.department|default:"—" }}</td>
+                <td class="small">{{ u.email|default:"—" }}<br>{{ u.phone|default:"—" }}</td>
+                <td class="small">{{ u.date_joined|date:"M j, Y" }}</td>
+                <td>
+                  {% if u.is_active %}<span class="badge text-bg-success">Active</span>
+                  {% else %}<span class="badge text-bg-danger">Deactivated</span>{% endif %}
+                </td>
+                <td class="text-end">
+                  {% if u != request.user %}
+                    <div class="d-inline-flex gap-1">
+                      <form method="post" action="{% url 'admin_user_action' u.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <select name="new_role" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()" title="Change role">
+                          <option value="" selected>Role…</option>
+                          {% for value, label in role_choices %}
+                            <option value="{{ value }}" {% if u.role == value %}disabled{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                      </form>
+                      <form method="post" action="{% url 'admin_user_action' u.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        {% if u.is_active %}
+                          <button name="action" value="deactivate" class="btn btn-sm btn-outline-danger" data-confirm="Deactivate {{ u.full_name }}? They will no longer be able to log in."><i class="bi bi-person-dash"></i></button>
+                        {% else %}
+                          <button name="action" value="activate" class="btn btn-sm btn-outline-success"><i class="bi bi-person-plus"></i></button>
+                        {% endif %}
+                      </form>
+                    </div>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="7" class="text-center text-secondary py-4">No users found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% include "partials/pagination.html" %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

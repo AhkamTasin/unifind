@@ -25,22 +25,39 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url 'report_lost' %}"><i class="bi bi-emoji-frown me-2"></i>Report a Lost Item</a></li>
             <li><a class="dropdown-item" href="{% url 'report_found' %}"><i class="bi bi-emoji-smile me-2"></i>Report a Found Item</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'my_reports' %}"><i class="bi bi-journal-text me-2"></i>My Reports</a></li>
           </ul>
         </li>
         {% endif %}
         <li class="nav-item"><a class="nav-link" href="{% url 'how_it_works' %}">How It Works</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
         {% if user.is_admin_user %}
-        <li class="nav-item"><a class="nav-link text-warning fw-semibold" href="{% url 'desk_reports' %}">
-          <i class="bi bi-clipboard-data me-1"></i>Desk Reports
-        </a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-warning fw-semibold" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-speedometer2 me-1"></i>Admin Panel
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+            <li><a class="dropdown-item" href="{% url 'admin_items' %}"><i class="bi bi-collection me-2"></i>Manage Posts</a></li>
+            <li><a class="dropdown-item" href="{% url 'admin_claims' %}"><i class="bi bi-clipboard-check me-2"></i>Review Claims</a></li>
+            <li><a class="dropdown-item" href="{% url 'admin_users' %}"><i class="bi bi-people me-2"></i>Manage Users</a></li>
+            <li><a class="dropdown-item" href="{% url 'admin_categories' %}"><i class="bi bi-tags me-2"></i>Categories</a></li>
+          </ul>
+        </li>
         {% endif %}
       </ul>
 
       <ul class="navbar-nav align-items-lg-center">
         {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link position-relative" href="{% url 'notifications' %}" title="Notifications">
+              <i class="bi bi-bell fs-5"></i>
+              {% if unread_notifications %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ unread_notifications }}
+                </span>
+              {% endif %}
+            </a>
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
               {% if user.profile_photo %}
@@ -56,6 +73,7 @@
               <li><h6 class="dropdown-header">{{ user.get_role_display }}</h6></li>
               <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'my_reports' %}"><i class="bi bi-journal-text me-2"></i>My Reports</a></li>
+              <li><a class="dropdown-item" href="{% url 'my_claims' %}"><i class="bi bi-clipboard-check me-2"></i>My Claims</a></li>
               <li><a class="dropdown-item" href="{% url 'notifications' %}"><i class="bi bi-bell me-2"></i>Notifications</a></li>
               <li><hr class="dropdown-divider"></li>
               <li>

@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Post #{{ item.pk }} | Admin | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 900px;">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'admin_items' %}?kind={{ kind }}">Manage Posts</a></li>
+        <li class="breadcrumb-item active">Post #{{ item.pk }}</li>
+      </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+          <div>
+            <span class="badge {% if kind == 'lost' %}text-bg-danger{% else %}text-bg-success{% endif %} mb-2">
+              {{ kind|upper }} ITEM
+            </span>
+            <h1 class="h4 fw-bold mb-1">{{ item.item_name }}</h1>
+            <p class="text-secondary small mb-0">
+              {% if kind == 'lost' %}Reported by {{ item.reporter.full_name }} ({{ item.reporter.get_role_display }}){% else %}Found by {{ item.finder.full_name }} ({{ item.finder.get_role_display }}){% endif %}
+              · {{ item.created_at|date:"M j, Y h:i A" }}
+            </p>
+          </div>
+          <div class="text-end">
+            {% if kind == 'lost' %}
+              {% if item.status == 'OPEN' %}<span class="badge text-bg-warning fs-6">Open</span>
+              {% elif item.status == 'RESOLVED' %}<span class="badge text-bg-dark fs-6">Resolved</span>
+              {% else %}<span class="badge text-bg-secondary fs-6">Rejected</span>{% endif %}
+            {% else %}
+              {% if item.status == 'PENDING' %}<span class="badge text-bg-secondary fs-6">Pending Submission</span>
+              {% elif item.status == 'SUBMITTED' %}<span class="badge text-bg-info fs-6">Submitted to Desk</span>
+              {% elif item.status == 'AVAILABLE' %}<span class="badge text-bg-success fs-6">Verified &amp; Available</span>
+              {% elif item.status == 'RESERVED' %}<span class="badge text-bg-primary fs-6">Claim Approved</span>
+              {% elif item.status == 'RESOLVED' %}<span class="badge text-bg-dark fs-6">Resolved</span>
+              {% else %}<span class="badge text-bg-danger fs-6">Rejected</span>{% endif %}
+            {% endif %}
+            {% if item.tracking_id %}<div><code class="fs-6">{{ item.tracking_id }}</code></div>{% endif %}
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-4">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ item.item_name }}">
+            {% else %}
+              <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center" style="height: 200px;">
+                <span class="text-secondary"><i class="bi bi-image me-1"></i>No image</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="col-md-8">
+            <p>{{ item.description }}</p>
+            <ul class="list-unstyled small">
+              <li class="mb-2"><i class="bi bi-tag me-2 text-primary"></i><strong>Category:</strong> {{ item.category.name }}</li>
+              <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i><strong>{% if kind == 'lost' %}Lost at:{% else %}Found at:{% endif %}</strong> {% if kind == 'lost' %}{{ item.lost_location }}{% else %}{{ item.found_location }}{% endif %}</li>
+              <li class="mb-2"><i class="bi bi-calendar3 me-2 text-primary"></i><strong>{% if kind == 'lost' %}Lost on:{% else %}Found on:{% endif %}</strong> {% if kind == 'lost' %}{{ item.lost_date }}{% else %}{{ item.found_date }}{% endif %}</li>
+              {% if kind == 'lost' %}
+                <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i><strong>Reporter contact:</strong> {{ item.reporter.phone|default:"—" }} ({{ item.reporter.email|default:"—" }})</li>
+              {% else %}
+                <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i><strong>Finder contact:</strong> {{ item.finder.phone|default:"—" }} ({{ item.finder.email|default:"—" }})</li>
+                {% if item.verified_by %}
+                  <li class="mb-2"><i class="bi bi-patch-check me-2 text-primary"></i><strong>Verified by:</strong> {{ item.verified_by.full_name }}</li>
+                {% endif %}
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+
+        <hr>
+        <h6 class="fw-bold mb-3"><i class="bi bi-sliders me-2"></i>Desk Actions</h6>
+
+        {% if kind == 'lost' %}
+          {% if item.status == 'OPEN' %}
+            <form method="post" action="{% url 'admin_lost_action' item.pk %}" class="d-flex flex-wrap gap-2">
+              {% csrf_token %}
+              <button name="action" value="resolve" class="btn btn-dark" data-confirm="Mark this lost item case as resolved?">
+                <i class="bi bi-check2-circle me-1"></i>Mark as Resolved
+              </button>
+              <button name="action" value="reject" class="btn btn-outline-danger" data-confirm="Reject and remove this lost item report?">
+                <i class="bi bi-x-circle me-1"></i>Reject (Fake/Inappropriate)
+              </button>
+            </form>
+          {% else %}
+            <span class="text-secondary small">No actions available — case is {{ item.get_status_display|lower }}.</span>
+          {% endif %}
+        {% else %}
+          {% if item.status == 'PENDING' or item.status == 'SUBMITTED' %}
+            <form method="post" action="{% url 'admin_found_action' item.pk %}" class="d-flex flex-wrap gap-2 align-items-center">
+              {% csrf_token %}
+              <button name="action" value="verify" class="btn btn-success">
+                <i class="bi bi-patch-check me-1"></i>Verify &amp; Assign Tracking ID
+              </button>
+              <button name="action" value="reject" class="btn btn-outline-danger" data-confirm="Reject and remove this found item report?">
+                <i class="bi bi-x-circle me-1"></i>Reject
+              </button>
+            </form>
+          {% elif item.status == 'AVAILABLE' or item.status == 'RESERVED' %}
+            <form method="post" action="{% url 'admin_found_action' item.pk %}" class="d-flex flex-wrap gap-2">
+              {% csrf_token %}
+              <button name="action" value="resolve" class="btn btn-dark" data-confirm="Mark this item as returned and close the case?">
+                <i class="bi bi-check2-circle me-1"></i>Mark as Returned / Resolved
+              </button>
+            </form>
+          {% else %}
+            <span class="text-secondary small">No actions available — case is {{ item.get_status_display|lower }}.</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+    {% if claims %}
+    <div class="card border-0 shadow-sm mt-4">
+      <div class="card-header bg-white fw-bold"><i class="bi bi-clipboard-check me-2"></i>Claims ({{ claims|length }})</div>
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead><tr><th>Claimant</th><th>Status</th><th>Submitted</th><th></th></tr></thead>
+          <tbody>
+            {% for c in claims %}
+              <tr>
+                <td class="fw-semibold">{{ c.claimant.full_name }}</td>
+                <td>{% with b=c.status_badge %}<span class="badge text-bg-{{ b.0 }}">{{ b.1 }}</span>{% endwith %}</td>
+                <td>{{ c.created_at|date:"M j, Y" }}</td>
+                <td class="text-end"><a href="{% url 'admin_claim_detail' c.pk %}" class="btn btn-sm btn-outline-primary">Review</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

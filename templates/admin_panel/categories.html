@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Categories | UniFind{% endblock %}
+{% block content %}
+<section class="py-4 bg-light min-vh-100">
+  <div class="container" style="max-width: 760px;">
+    <h1 class="fw-bold mb-3"><i class="bi bi-tags me-2"></i>Categories</h1>
+
+    <div class="row g-4">
+      <div class="col-md-5">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white fw-bold">Add a Category</div>
+          <div class="card-body">
+            <form method="post" action="{% url 'admin_category_add' %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Category name</label>
+                <input type="text" name="name" class="form-control" required placeholder="e.g. Sports Equipment">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Bootstrap icon class</label>
+                <input type="text" name="icon" class="form-control" value="bi-box" placeholder="bi-box">
+                <div class="form-text">See <a href="https://icons.getbootstrap.com" target="_blank" rel="noopener">Bootstrap Icons</a>.</div>
+              </div>
+              <button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Category</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white fw-bold">Existing Categories</div>
+          <ul class="list-group list-group-flush">
+            {% for c in categories %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><i class="bi {{ c.icon }} me-2 text-primary"></i>{{ c.name }}</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge text-bg-light border">{{ c.lost_items.count }} lost · {{ c.found_items.count }} found</span>
+                  <form method="post" action="{% url 'admin_category_delete' c.pk %}" data-confirm="Delete category '{{ c.name }}'?">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                  </form>
+                </div>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-secondary">No categories yet.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
